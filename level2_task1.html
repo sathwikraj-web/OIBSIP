@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculator</title>
+  <style>
+    body {
+      background-color: #4b84c4;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+    }
+    .calculator {
+      background: #e6f0fa;
+      padding: 20px;
+      border-radius: 20px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      width: 320px;
+    }
+    .display {
+      background: #cfe3f7;
+      padding: 15px;
+      border-radius: 10px;
+      font-size: 24px;
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      overflow-x: auto;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+    button {
+      padding: 20px;
+      font-size: 18px;
+      border: none;
+      border-radius: 10px;
+      background-color: #a9cef4;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    button:hover {
+      background-color: #8bbbe8;
+    }
+    .enter {
+      background-color: #3a6ea5;
+      color: white;
+      grid-column: span 2;
+    }
+  </style>
+</head>
+<body>
+  <div class="calculator">
+    <div class="display">
+      <div id="expression"></div>
+      <div id="result"></div>
+    </div>
+    <div class="grid">
+      <button onclick="append('(')">(</button>
+      <button onclick="append(')')">)</button>
+      <button onclick="answer()">ans</button>
+      <button onclick="del()">del</button>
+
+      <button onclick="append('7')">7</button>
+      <button onclick="append('8')">8</button>
+      <button onclick="append('9')">9</button>
+      <button onclick="append('%')">%</button>
+
+      <button onclick="append('4')">4</button>
+      <button onclick="append('5')">5</button>
+      <button onclick="append('6')">6</button>
+      <button onclick="append('*')">x</button>
+
+      <button onclick="append('1')">1</button>
+      <button onclick="append('2')">2</button>
+      <button onclick="append('3')">3</button>
+      <button onclick="append('/')">÷</button>
+
+      <button onclick="append('.')">.</button>
+      <button onclick="append('0')">0</button>
+      <button onclick="append('+')">+</button>
+      <button onclick="append('-')">-</button>
+
+      <button onclick="clearDisplay()">clear</button>
+      <button class="enter" onclick="calculate()">ENTER</button>
+    </div>
+  </div>
+
+  <script>
+    let expression = '';
+    let lastAnswer = '';
+
+    const exprDisplay = document.getElementById('expression');
+    const resultDisplay = document.getElementById('result');
+
+    function append(char) {
+      expression += char;
+      exprDisplay.textContent = expression;
+    }
+
+    function calculate() {
+      try {
+        let res = eval(expression.replace(/x/g, '*').replace(/÷/g, '/'));
+        resultDisplay.textContent = res;
+        lastAnswer = res;
+      } catch (e) {
+        resultDisplay.textContent = 'Error';
+      }
+    }
+
+    function clearDisplay() {
+      expression = '';
+      exprDisplay.textContent = '';
+      resultDisplay.textContent = '';
+    }
+
+    function del() {
+      expression = expression.slice(0, -1);
+      exprDisplay.textContent = expression;
+    }
+
+    function answer() {
+      expression += lastAnswer;
+      exprDisplay.textContent = expression;
+    }
+  </script>
+</body>
+</html>
