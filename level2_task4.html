@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Simple Auth System</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f4f4f4; }
+        .container { width: 300px; margin: 60px auto; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px #ccc; }
+        h2 { text-align: center; }
+        input[type="text"], input[type="password"] { width: 100%; padding: 8px; margin: 8px 0; }
+        button { width: 100%; padding: 10px; background: #007bff; color: #fff; border: none; border-radius: 4px; }
+        .msg { color: red; text-align: center; }
+        .link { color: #007bff; cursor: pointer; text-decoration: underline; display: block; margin: 10px 0; text-align: center; }
+    </style>
+</head>
+<body>
+    <div class="container" id="registerForm">
+        <h2>Register</h2>
+        <input type="text" id="regUser" placeholder="Username">
+        <input type="password" id="regPass" placeholder="Password">
+        <button onclick="register()">Register</button>
+        <div class="msg" id="regMsg"></div>
+        <span class="link" onclick="showLogin()">Already have an account? Login</span>
+    </div>
+
+    <div class="container" id="loginForm" style="display:none;">
+        <h2>Login</h2>
+        <input type="text" id="loginUser" placeholder="Username">
+        <input type="password" id="loginPass" placeholder="Password">
+        <button onclick="login()">Login</button>
+        <div class="msg" id="loginMsg"></div>
+        <span class="link" onclick="showRegister()">No account? Register</span>
+    </div>
+
+    <div class="container" id="securedPage" style="display:none;">
+        <h2>Secured Page</h2>
+        <div id="welcome"></div>
+        <button onclick="logout()">Logout</button>
+    </div>
+
+    <script>
+        // In-memory user store
+        const users = {};
+
+        function showRegister() {
+            document.getElementById('registerForm').style.display = '';
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('securedPage').style.display = 'none';
+            document.getElementById('regMsg').textContent = '';
+        }
+
+        function showLogin() {
+            document.getElementById('registerForm').style.display = 'none';
+            document.getElementById('loginForm').style.display = '';
+            document.getElementById('securedPage').style.display = 'none';
+            document.getElementById('loginMsg').textContent = '';
+        }
+
+        function showSecured(username) {
+            document.getElementById('registerForm').style.display = 'none';
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('securedPage').style.display = '';
+            document.getElementById('welcome').textContent = `Welcome to the secured page, ${username}!`;
+        }
+
+        function register() {
+            const user = document.getElementById('regUser').value.trim();
+            const pass = document.getElementById('regPass').value;
+            if (!user || !pass) {
+                document.getElementById('regMsg').textContent = 'Please fill all fields.';
+                return;
+            }
+            if (users[user]) {
+                document.getElementById('regMsg').textContent = 'Username already exists.';
+                return;
+            }
+            users[user] = pass;
+            document.getElementById('regMsg').textContent = 'Registration successful. Please login.';
+            setTimeout(showLogin, 1000);
+        }
+
+        function login() {
+            const user = document.getElementById('loginUser').value.trim();
+            const pass = document.getElementById('loginPass').value;
+            if (users[user] && users[user] === pass) {
+                showSecured(user);
+            } else {
+                document.getElementById('loginMsg').textContent = 'Invalid credentials.';
+            }
+        }
+
+        function logout() {
+            showLogin();
+        }
+    </script>
+</body>
+</html>
