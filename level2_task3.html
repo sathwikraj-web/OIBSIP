@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>To-Do List App</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
+      color: white;
+      margin: 0;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 30px;
+      justify-content: center;
+    }
+
+    .form-box {
+      background: white;
+      color: black;
+      padding: 20px;
+      border-radius: 8px;
+      width: 300px;
+    }
+
+    input, textarea, button {
+      width: 100%;
+      margin: 10px 0;
+      padding: 10px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      background-color: green;
+      color: white;
+      border: none;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: darkgreen;
+    }
+
+    .task-list {
+      width: 45%;
+    }
+
+    .task-list h2 {
+      border-bottom: 2px solid white;
+      padding-bottom: 5px;
+    }
+
+    .task {
+      background: white;
+      color: black;
+      margin: 10px 0;
+      padding: 10px;
+      border-radius: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .task p {
+      margin: 5px 0;
+    }
+
+    .actions button {
+      margin-left: 5px;
+      background-color: #dc3545;
+    }
+
+    .actions .edit {
+      background-color: #ffc107;
+      color: black;
+    }
+
+    .actions .done {
+      background-color: #28a745;
+    }
+
+    .timestamp {
+      font-size: 0.8em;
+      color: #444;
+    }
+  </style>
+</head>
+<body>
+
+<h1>To-Do List Web App</h1>
+<div class="container">
+  <div class="form-box">
+    <h2>Add Task</h2>
+    <input type="text" id="title" placeholder="Title" required>
+    <textarea id="description" rows="3" placeholder="Description" required></textarea>
+    <button onclick="addTask()">Save</button>
+  </div>
+
+  <div class="task-list">
+    <h2>Pending Tasks</h2>
+    <div id="pendingTasks"></div>
+  </div>
+
+  <div class="task-list">
+    <h2>Completed Tasks</h2>
+    <div id="completedTasks"></div>
+  </div>
+</div>
+
+<script>
+  let tasks = [];
+
+  function addTask() {
+    const title = document.getElementById('title').value.trim();
+    const description = document.getElementById('description').value.trim();
+    if (!title || !description) {
+      alert("Please fill out both fields.");
+      return;
+    }
+
+    const task = {
+      id: Date.now(),
+      title,
+      description,
+      status: 'pending',
+      createdAt: new Date().toLocaleString(),
+      completedAt: null
+    };
+
+    tasks.push(task);
+    renderTasks();
+    document.getElementById('title').value = '';
+    document.getElementById('description').value = '';
+  }
+
+  function renderTasks() {
+    const pendingDiv = document.getElementById('pendingTasks');
+    const completedDiv = document.getElementById('completedTasks');
+    pendingDiv.innerHTML = '';
+    completedDiv.innerHTML = '';
+
+    tasks.forEach(task => {
+      const div = document.createElement('div');
+      div.className = 'task';
+      div.innerHTML = `
+        <div>
+          <strong>${task.title}</strong>
+          <p>${task.description}</p>
+          <p class="timestamp">Created: ${task.createdAt}</p>
+          ${task.completedAt ? `<p class="timestamp">Completed: ${task.completedAt}</p>` : ''}
+        </div>
+        <div class="actions">
+          ${task.status === 'pending' ? `<button class="done" onclick="markComplete(${task.id})">Done</button>` : ''}
+          <button class="edit" onclick="editTask(${task.id})">Edit</button>
+          <button onclick="deleteTask(${task.id})">X</button>
+        </div>
+      `;
+
+      task.status === 'pending' ? pendingDiv.appendChild(div) : completedDiv.appendChild(div);
+    });
+  }
+
+  function markComplete(id) {
+    const task = tasks.find(t => t.id === id);
+    if (task) {
+      task.status = 'completed';
+      task.completedAt = new Date().toLocaleString();
+    }
+    renderTasks();
+  }
+
+  function deleteTask(id) {
+    tasks = tasks.filter(t => t.id !== id);
+    renderTasks();
+  }
+
+  function editTask(id) {
+    const task = tasks.find(t => t.id === id);
+    if (task) {
+      const newTitle = prompt("Edit Title", task.title);
+      const newDesc = prompt("Edit Description", task.description);
+      if (newTitle && newDesc) {
+        task.title = newTitle;
+        task.description = newDesc;
+        renderTasks();
+      }
+    }
+  }
+
+</script>
+
+</body>
+</html>
